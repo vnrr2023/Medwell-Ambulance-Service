@@ -1,8 +1,8 @@
 package com.medwell.ambulance.ambulance;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medwell.ambulance.dto.AmbulanceLocationDTO;
 import com.medwell.ambulance.utils.RedisUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,5 +23,6 @@ public class AmbulanceConsumerService {
         AmbulanceLocationDTO locationDTO=objectMapper.readValue(message, AmbulanceLocationDTO.class);
         redisUtility.setLocationOfAmbulance(locationDTO);
     }
+
 
 }

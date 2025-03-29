@@ -1,4 +1,4 @@
-package com.medwell.ambulance.ambulance;
+package com.medwell.ambulance.dto;
 
 
 import lombok.Data;

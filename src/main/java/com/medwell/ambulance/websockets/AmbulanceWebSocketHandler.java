@@ -1,7 +1,8 @@
-package com.medwell.ambulance.ambulance;
+package com.medwell.ambulance.websockets;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medwell.ambulance.dto.AmbulanceLocationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
 
     AmbulanceLocationDTO ambulanceLocationDTO=objectMapper.readValue(message.getPayload(), AmbulanceLocationDTO.class);
     kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
+    session.sendMessage(new TextMessage("Recieved your location"));
 
     }
 }

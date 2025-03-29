@@ -1,7 +1,9 @@
 package com.medwell.ambulance.config;
 
 
-import com.medwell.ambulance.ambulance.AmbulanceWebSocketHandler;
+import com.medwell.ambulance.websockets.AmbulanceWebSocketHandler;
+import com.medwell.ambulance.websockets.NearbyAmbulanceWebsocketHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -11,11 +13,18 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
+    @Autowired
+    private AmbulanceWebSocketHandler ambulanceWebSocketHandler;
+
+    @Autowired
+    private NearbyAmbulanceWebsocketHandler nearbyAmbulanceWebsocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-        registry.addHandler(new AmbulanceWebSocketHandler(), "/ambulance-location").setAllowedOrigins("*");
+        registry.addHandler(ambulanceWebSocketHandler, "/ambulance-location").setAllowedOrigins("*");
+        registry.addHandler(nearbyAmbulanceWebsocketHandler, "/nearby-ambulance-locations").setAllowedOrigins("*");
+
 
     }
 }

@@ -3,6 +3,7 @@ package com.medwell.ambulance.config;
 import com.medwell.ambulance.utils.SecretLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -36,7 +37,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String,String> getTemplate(RedisConnectionFactory factory){
+    @Primary
+    public RedisTemplate<String,String> getRedisTemplate(RedisConnectionFactory factory){
         RedisTemplate<String,String> template=new RedisTemplate<>();
         template.setConnectionFactory(factory);
         template.setKeySerializer(new StringRedisSerializer());
