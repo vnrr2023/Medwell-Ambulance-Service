@@ -40,7 +40,7 @@ public class CustomUser {
 
     @PrePersist
     private void assignId(){
-        if (this.id!=null) this.id= NanoIdUtils.randomNanoId();
+        if (this.id==null) this.id= NanoIdUtils.randomNanoId();
     }
 
 }

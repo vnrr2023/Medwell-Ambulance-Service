@@ -21,14 +21,17 @@ public class Ambulance {
 
     private String numberPlate;
 
+    private String ambulanceBrandName;
+
     @OneToOne
     private CustomUser user;
 
     private String status;
 
+
     @PrePersist
     private void assignId(){
-        if (this.id!=null) this.id= NanoIdUtils.randomNanoId();
+        if (this.id==null) this.id= NanoIdUtils.randomNanoId();
     }
 
 

@@ -22,7 +22,7 @@ public class Booking {
 
     @PrePersist
     private void assignId(){
-        if (this.id!=null) this.id= NanoIdUtils.randomNanoId();
+        if (this.id==null) this.id= NanoIdUtils.randomNanoId();
     }
 
     @OneToOne
@@ -38,12 +38,9 @@ public class Booking {
     private Double dropLatitude;
     private Double dropLongitude;
 
-    @CreationTimestamp
-    @Column(updatable = false)
     private LocalDateTime requestedAt;
 
     private LocalDateTime updatedAt;
-
 
 
 }

@@ -1,6 +1,8 @@
 package com.medwell.ambulance.ambulance;
 
 
+import com.medwell.ambulance.dto.AmbulanceProfileDTO;
+import com.medwell.ambulance.entity.Ambulance;
 import com.medwell.ambulance.utils.RedisUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,16 @@ public class AmbulanceController {
         return ResponseEntity.status(200).build();
 
     }
+
+    @PostMapping("/complete-profile")
+    public ResponseEntity<?> completeAmbulanceProfile(@RequestBody AmbulanceProfileDTO ambulanceProfileDTO){
+
+        Ambulance ambulance=ambulanceService.addAmbulanceData(ambulanceProfileDTO.getAmbulanceType(),ambulanceProfileDTO.getAmbulanceBrandName(),ambulanceProfileDTO.getNumberPlate(),ambulanceProfileDTO.getUserId());
+
+        return ResponseEntity.status(201).body(ambulance);
+
+    }
+
 
 
 

@@ -3,6 +3,7 @@ package com.medwell.ambulance.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
+import com.medwell.ambulance.utils.RedisUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -19,13 +20,17 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private RedisUtility redisUtility;
+
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
     AmbulanceLocationDTO ambulanceLocationDTO=objectMapper.readValue(message.getPayload(), AmbulanceLocationDTO.class);
-    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
-    session.sendMessage(new TextMessage("Recieved your location"));
+//    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
+    String requests=redisUtility.getAllBookingRequests(ambulanceLocationDTO.getAmbulanceId());
+    session.sendMessage(new TextMessage(requests));
 
     }
 }

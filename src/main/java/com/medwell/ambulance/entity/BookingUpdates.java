@@ -17,9 +17,10 @@ public class BookingUpdates {
     @Id
     private String id;
 
+
     @PrePersist
     private void assignId(){
-        if (this.id!=null) this.id= NanoIdUtils.randomNanoId();
+        if (this.id==null) this.id= NanoIdUtils.randomNanoId();
     }
 
     @Enumerated(EnumType.STRING)
