@@ -2,6 +2,7 @@ package com.medwell.ambulance.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medwell.ambulance.dto.AmbulanceBookingRequestRedisDTO;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
@@ -32,6 +33,7 @@ public class RedisUtility {
     }
 
 //    this will be used when ambulance is booked
+    @Async
     public void removeAmbulanceGeoData(String ambulanceId){
         redisTemplate.opsForZSet().remove("ambulance-locations", ambulanceId);
     }
@@ -144,12 +146,35 @@ public List<Map<String, Object>> getNearbyAmbulanceData(Double lat, Double lon) 
 
     public void setBooking(String bookingId){
         String key="booking:"+bookingId;
-        redisTemplate.opsForValue().set(key,"true");
+        redisTemplate.opsForValue().set(key,"false");
     }
 
+    @Async
     public void removeBooking(String bookingId){
         String key="booking:"+bookingId;
+        redisTemplate.opsForValue().set(key,"true");
         redisTemplate.expire(key, 15L, TimeUnit.MINUTES);
+    }
+
+    @Async
+    public void removeRequestsFromAmbulances(String requestId,List<String> ambulances) throws JsonProcessingException {
+
+        for(String ambulanceId:ambulances){
+            String redisKey="ambulance-booking-requests:"+ambulanceId;
+            List<String> requests = redisTemplate.opsForList().range(redisKey, 0, -1);
+
+            if (requests == null || requests.isEmpty()) {
+                continue;
+            }
+            for (String request:requests){
+               if ( objectMapper.readValue(request, AmbulanceBookingRequestRedisDTO.class).getRequestId().equals(requestId)){
+                   redisTemplate.opsForList().remove(redisKey,1,request);
+                   break;
+               }
+            }
+
+        }
+
     }
 
 

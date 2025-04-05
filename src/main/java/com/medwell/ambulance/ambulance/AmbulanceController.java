@@ -1,6 +1,8 @@
 package com.medwell.ambulance.ambulance;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.medwell.ambulance.dto.AceeptBookingRequestDTO;
 import com.medwell.ambulance.dto.AmbulanceProfileDTO;
 import com.medwell.ambulance.entity.Ambulance;
 import com.medwell.ambulance.utils.RedisUtility;
@@ -18,10 +20,9 @@ public class AmbulanceController {
     @Autowired
     private RedisUtility redisUtility;
 
-    @PostMapping("/")
-    public ResponseEntity<?> updateAmabulanceStatus(@RequestParam("status") String status,
-                                                    @RequestParam("ambulanceId") String ambulanceId){
-
+    @PostMapping("/accept-booking")
+    public ResponseEntity<?> acceptBooking(@RequestBody AceeptBookingRequestDTO bookingRequestDTO) throws JsonProcessingException {
+            ambulanceService.acceptBookingRequest(bookingRequestDTO.getAmbulanceId(),bookingRequestDTO.getBookingId(),bookingRequestDTO.getRequestId(),bookingRequestDTO.getOtherAmbulances());
         return ResponseEntity.status(200).build();
 
     }

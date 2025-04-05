@@ -29,6 +29,7 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
 
     AmbulanceLocationDTO ambulanceLocationDTO=objectMapper.readValue(message.getPayload(), AmbulanceLocationDTO.class);
 //    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
+        redisUtility.setLocationOfAmbulance(ambulanceLocationDTO);
     String requests=redisUtility.getAllBookingRequests(ambulanceLocationDTO.getAmbulanceId());
     session.sendMessage(new TextMessage(requests));
 
