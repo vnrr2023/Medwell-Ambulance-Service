@@ -11,4 +11,7 @@ public class AceeptBookingRequestDTO {
     private String bookingId;
     private String requestId;
     private List<String> otherAmbulances;
+    private Double latitude;
+    private Double longitude;
+
 }

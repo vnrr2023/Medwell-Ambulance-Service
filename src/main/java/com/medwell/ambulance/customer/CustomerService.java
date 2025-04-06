@@ -11,7 +11,8 @@ import com.medwell.ambulance.enums.Status;
 import com.medwell.ambulance.repository.BookingRepository;
 import com.medwell.ambulance.repository.BookingUpdatesRepository;
 import com.medwell.ambulance.repository.CustomUserRepository;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.RedisBookingService;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,10 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
+
+    @Autowired
+    private RedisBookingService redisBookingService;
 
     @Autowired
     private CustomUserRepository customUserRepository;
@@ -57,8 +61,8 @@ public class CustomerService {
                 .status(Status.REQUESTED)
                 .build();
         bookingUpdatesRepository.save(bookingUpdates);
-        redisUtility.setBooking(booking.getId());
-        List<Map<String,String>> ambulanceData=redisUtility.getNearbyAmbulancesByType(ambulanceType,lat,lon);
+        redisBookingService.setBooking(booking.getId());
+        List<Map<String,String>> ambulanceData= redisGeoLocationService.getNearbyAmbulancesByType(ambulanceType,lat,lon);
         List<String> ambulanceIds = ambulanceData.stream()
                 .map(map -> map.get("ambulanceId"))
                 .collect(Collectors.toList());
@@ -72,7 +76,7 @@ public class CustomerService {
         for(Map<String,String> ambulance:ambulanceData){
             bookingRequestRedisDTO.setDistance(ambulance.get("distance"));
             String request=objectMapper.writeValueAsString(bookingRequestRedisDTO);
-            redisUtility.setAmbulanceRequest(request,ambulance.get("ambulanceId"));
+            redisBookingService.setAmbulanceRequest(request,ambulance.get("ambulanceId"));
 
         }
 

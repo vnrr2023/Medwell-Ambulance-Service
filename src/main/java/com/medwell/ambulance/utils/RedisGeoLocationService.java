@@ -1,8 +1,6 @@
 package com.medwell.ambulance.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medwell.ambulance.dto.AmbulanceBookingRequestRedisDTO;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
@@ -15,10 +13,9 @@ import org.springframework.data.redis.connection.RedisGeoCommands.GeoLocation;
 import org.springframework.data.redis.connection.RedisGeoCommands.GeoRadiusCommandArgs;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Component
-public class RedisUtility {
+public class RedisGeoLocationService {
 
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
@@ -42,10 +39,10 @@ public class RedisUtility {
 public List<Map<String, Object>> getNearbyAmbulanceData(Double lat, Double lon) {
     Circle circle = new Circle(new Point(lon, lat), new Distance(2, Metrics.KILOMETERS));
 
-    // Use RadiusOptions to request distances
+
     RedisGeoCommands.GeoRadiusCommandArgs args = GeoRadiusCommandArgs.newGeoRadiusArgs()
-            .includeDistance()  // Ensure distances are included
-            .sortAscending();   // Optional: Sort by nearest first
+            .includeDistance()
+            .sortAscending();
 
     GeoResults<GeoLocation<String>> results = redisTemplate.opsForGeo()
             .radius("ambulance-locations", circle, args);
@@ -120,66 +117,6 @@ public List<Map<String, Object>> getNearbyAmbulanceData(Double lat, Double lon) 
     public String getAmbulanceType(String ambulanceId){
         return redisTemplate.opsForValue().get("ambulance-type:"+ambulanceId);
     }
-
-
-//    public void initializeAmbulanceRequest(String ambulanceId){
-//        String key="ambulance-booking-requests:"+ambulanceId;
-//        redisTemplate.opsForList().rightPush(key, "INIT");
-////        redisTemplate.opsForList().remove(key, 1, "INIT");
-//    }
-
-    @Async
-    public void setAmbulanceRequest(String request,String ambulanceId){
-        String key="ambulance-booking-requests:"+ambulanceId;
-        redisTemplate.opsForList().rightPush(key,request);
-    }
-
-    public String getAllBookingRequests(String ambulanceId) throws JsonProcessingException
-    {
-        String key="ambulance-booking-requests:"+ambulanceId;
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key))) return "";
-        List<String> requestJsonList = redisTemplate.opsForList().range(key, 0, -1);
-        return objectMapper.writeValueAsString(requestJsonList);
-    }
-
-
-
-    public void setBooking(String bookingId){
-        String key="booking:"+bookingId;
-        redisTemplate.opsForValue().set(key,"false");
-    }
-
-    @Async
-    public void removeBooking(String bookingId){
-        String key="booking:"+bookingId;
-        redisTemplate.opsForValue().set(key,"true");
-        redisTemplate.expire(key, 15L, TimeUnit.MINUTES);
-    }
-
-    @Async
-    public void removeRequestsFromAmbulances(String requestId,List<String> ambulances) throws JsonProcessingException {
-
-        for(String ambulanceId:ambulances){
-            String redisKey="ambulance-booking-requests:"+ambulanceId;
-            List<String> requests = redisTemplate.opsForList().range(redisKey, 0, -1);
-
-            if (requests == null || requests.isEmpty()) {
-                continue;
-            }
-            for (String request:requests){
-               if ( objectMapper.readValue(request, AmbulanceBookingRequestRedisDTO.class).getRequestId().equals(requestId)){
-                   redisTemplate.opsForList().remove(redisKey,1,request);
-                   break;
-               }
-            }
-
-        }
-
-    }
-
-
-
-
 
 
 

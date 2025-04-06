@@ -44,5 +44,7 @@ public class Booking {
 
     private boolean assigned;
 
+    private String routeToCustomer;
+
 
 }

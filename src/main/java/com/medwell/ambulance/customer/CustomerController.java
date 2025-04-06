@@ -3,7 +3,7 @@ package com.medwell.ambulance.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.medwell.ambulance.dto.BookingRequestDTO;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class CustomerController {
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
 
     @Autowired
     private CustomerService customerService;
@@ -25,7 +25,7 @@ public class CustomerController {
     @GetMapping("/get-nearby-ambulances/{latitude}/{longitude}")
     public ResponseEntity<?> getNearbyAmbulances(@PathVariable("latitude") Double lat,@PathVariable("longitude") Double lon){
 
-        List<Map<String, Object>>  resp=redisUtility.getNearbyAmbulanceData(lat, lon);
+        List<Map<String, Object>>  resp= redisGeoLocationService.getNearbyAmbulanceData(lat, lon);
         return ResponseEntity.status(200).body(resp);
 
     }

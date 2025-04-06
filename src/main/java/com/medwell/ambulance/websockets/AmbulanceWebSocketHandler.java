@@ -3,7 +3,8 @@ package com.medwell.ambulance.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.RedisBookingService;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,10 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
+
+    @Autowired
+    private RedisBookingService redisBookingService;
 
 
     @Override
@@ -29,8 +33,8 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
 
     AmbulanceLocationDTO ambulanceLocationDTO=objectMapper.readValue(message.getPayload(), AmbulanceLocationDTO.class);
 //    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
-        redisUtility.setLocationOfAmbulance(ambulanceLocationDTO);
-    String requests=redisUtility.getAllBookingRequests(ambulanceLocationDTO.getAmbulanceId());
+        redisGeoLocationService.setLocationOfAmbulance(ambulanceLocationDTO);
+    String requests=redisBookingService.getAllBookingRequests(ambulanceLocationDTO.getAmbulanceId());
     session.sendMessage(new TextMessage(requests));
 
     }

@@ -2,7 +2,7 @@ package com.medwell.ambulance.websockets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medwell.ambulance.dto.NearbyAmbulanceDTO;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -20,7 +20,7 @@ public class NearbyAmbulanceWebsocketHandler extends TextWebSocketHandler {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -30,7 +30,7 @@ public class NearbyAmbulanceWebsocketHandler extends TextWebSocketHandler {
 
             ambulanceList.add(Map.of(
                     "ambulanceId",id,
-                    "location",redisUtility.getCurrentLocationOfAvailableAmbulance(id)
+                    "location", redisGeoLocationService.getCurrentLocationOfAvailableAmbulance(id)
             ));
 
         }

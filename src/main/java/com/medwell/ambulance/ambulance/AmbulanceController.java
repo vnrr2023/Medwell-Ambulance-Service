@@ -4,8 +4,10 @@ package com.medwell.ambulance.ambulance;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.medwell.ambulance.dto.AceeptBookingRequestDTO;
 import com.medwell.ambulance.dto.AmbulanceProfileDTO;
+import com.medwell.ambulance.dto.BookingResponseDTO;
+import com.medwell.ambulance.dto.BookingStatusRequestDTO;
 import com.medwell.ambulance.entity.Ambulance;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +20,12 @@ public class AmbulanceController {
     private AmbulanceService ambulanceService;
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
 
     @PostMapping("/accept-booking")
     public ResponseEntity<?> acceptBooking(@RequestBody AceeptBookingRequestDTO bookingRequestDTO) throws JsonProcessingException {
-            ambulanceService.acceptBookingRequest(bookingRequestDTO.getAmbulanceId(),bookingRequestDTO.getBookingId(),bookingRequestDTO.getRequestId(),bookingRequestDTO.getOtherAmbulances());
-        return ResponseEntity.status(200).build();
+        BookingResponseDTO responseDTO= ambulanceService.acceptBookingRequest(bookingRequestDTO.getAmbulanceId(),bookingRequestDTO.getBookingId(),bookingRequestDTO.getRequestId(),bookingRequestDTO.getOtherAmbulances(),bookingRequestDTO.getLatitude(),bookingRequestDTO.getLongitude());
+        return ResponseEntity.status(201).body(responseDTO);
 
     }
 
@@ -31,7 +33,7 @@ public class AmbulanceController {
     public ResponseEntity<?> sendAmbulanceType(@RequestParam("type") String type,
                                                @RequestParam("ambulanceId") String ambulanceId){
 
-        redisUtility.setAmbulanceType(ambulanceId,type);
+        redisGeoLocationService.setAmbulanceType(ambulanceId,type);
         return ResponseEntity.status(200).build();
 
     }
@@ -43,6 +45,14 @@ public class AmbulanceController {
 
         return ResponseEntity.status(201).body(ambulance);
 
+    }
+
+    @PostMapping("/update-booking-status")
+    public ResponseEntity<?> updateBookingStatus(@RequestBody BookingStatusRequestDTO bookingStatusRequestDTO){
+        ambulanceService.updateBookingStatusOfLocation(bookingStatusRequestDTO.getUpdatedStatus(),
+                bookingStatusRequestDTO.getBookingId()
+        );
+        return ResponseEntity.status(201).build();
     }
 
 

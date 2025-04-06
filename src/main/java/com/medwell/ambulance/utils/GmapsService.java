@@ -1,12 +1,10 @@
 package com.medwell.ambulance.utils;
 
+import com.medwell.ambulance.dto.PolylineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
 
 @Service
 public class GmapsService {
@@ -22,18 +20,10 @@ public class GmapsService {
                 GMAPS_SERVICE_URL,lat1, lon1, lat2, lon2
         );
 
-        // Make the GET request and parse the response into a Map
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-        Map<String, String> responseBody = response.getBody();
-
-        // Extract polyline key from the response
-        if (response.getStatusCode()== HttpStatusCode.valueOf(400)) {
-            return responseBody.get("polyline");
-        } else {
-            return "No polyline found";
-        }
+        PolylineDTO polylineDTO = restTemplate.getForObject(url, PolylineDTO.class);
+        assert polylineDTO != null;
+        return polylineDTO.getPolyline()!=null ? polylineDTO.getPolyline() : null;
     }
-
 
 
 }

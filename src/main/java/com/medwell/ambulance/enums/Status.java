@@ -6,5 +6,5 @@ public enum Status {
     ASSIGNED,
     IN_TRANSIT,
     COMPLETED,
-    ARRIVING
+    ARRIVED
 }

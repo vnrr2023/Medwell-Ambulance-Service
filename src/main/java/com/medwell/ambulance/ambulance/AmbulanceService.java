@@ -3,6 +3,7 @@ package com.medwell.ambulance.ambulance;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.medwell.ambulance.dto.BookingResponseDTO;
+import com.medwell.ambulance.dto.BookingStatusRequestDTO;
 import com.medwell.ambulance.entity.Ambulance;
 import com.medwell.ambulance.entity.Booking;
 import com.medwell.ambulance.entity.BookingUpdates;
@@ -12,7 +13,9 @@ import com.medwell.ambulance.repository.AmbulanceRepository;
 import com.medwell.ambulance.repository.BookingRepository;
 import com.medwell.ambulance.repository.BookingUpdatesRepository;
 import com.medwell.ambulance.repository.CustomUserRepository;
-import com.medwell.ambulance.utils.RedisUtility;
+import com.medwell.ambulance.utils.GmapsService;
+import com.medwell.ambulance.utils.RedisBookingService;
+import com.medwell.ambulance.utils.RedisGeoLocationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +28,10 @@ import java.util.Optional;
 public class AmbulanceService {
 
     @Autowired
-    private RedisUtility redisUtility;
+    private RedisGeoLocationService redisGeoLocationService;
+
+    @Autowired
+    private RedisBookingService redisBookingService;
 
     @Autowired
     private CustomUserRepository customUserRepository;
@@ -40,6 +46,8 @@ public class AmbulanceService {
     private BookingUpdatesRepository bookingUpdatesRepository;
 
 
+    @Autowired
+    private GmapsService gmapsService;
 
 
 
@@ -59,7 +67,7 @@ public class AmbulanceService {
     }
 
     @Transactional
-    public BookingResponseDTO acceptBookingRequest(String ambulanceId, String bookingId, String requestId, List<String> otherAmbulances) throws JsonProcessingException {
+    public BookingResponseDTO acceptBookingRequest(String ambulanceId, String bookingId, String requestId, List<String> otherAmbulances,Double driverLat,Double driverLon) throws JsonProcessingException {
         Optional<Booking> optionalBooking = bookingRepository.findByIdWithLock(bookingId);
 
         if (optionalBooking.isEmpty()) {
@@ -76,19 +84,45 @@ public class AmbulanceService {
         CustomUser customUser=customUserRepository.findById(ambulanceId).get();
         booking.setAmbulance(customUser);
         booking.setUpdatedAt(LocalDateTime.now());
+        String polyine=gmapsService.getPolyline(driverLat,driverLon,booking.getPickupLatitude(),booking.getPickupLongitude());
+        booking.setRouteToCustomer(polyine);
         bookingRepository.save(booking);
+
         BookingUpdates updates=bookingUpdatesRepository.findByBooking(booking);
         updates.setStatus(Status.ASSIGNED);
         updates.setUpdatedAt(LocalDateTime.now());
-        redisUtility.removeAmbulanceGeoData(ambulanceId);
+        bookingUpdatesRepository.save(updates);
 
-        redisUtility.removeBooking(bookingId);
+        redisGeoLocationService.removeAmbulanceGeoData(ambulanceId);
 
-        redisUtility.removeRequestsFromAmbulances(requestId,otherAmbulances);
+        redisBookingService.removeBooking(bookingId);
 
+        redisBookingService.removeRequestsFromAmbulances(requestId,otherAmbulances);
+//        send notification to customer here
         return BookingResponseDTO.builder().booking(booking).status(true).message("Assignment Successfull")
                 .build();
 
 
     }
+
+    public void updateBookingStatusOfLocation(String updatedStatus,String bookingId){
+        Booking booking=bookingRepository.findById(bookingId).get();
+        BookingUpdates bookingUpdates=bookingUpdatesRepository.findByBooking(booking);
+        Status status=switch (updatedStatus){
+            case "ARRIVED" -> Status.ARRIVED;
+            case "COMPLETED" -> Status.COMPLETED;
+            case "IN_TRANSIT" -> Status.IN_TRANSIT;
+            default -> Status.COMPLETED;
+        };
+        bookingUpdates.setStatus(status);
+        bookingUpdates.setUpdatedAt(LocalDateTime.now());
+        bookingUpdatesRepository.save(bookingUpdates);
+//        send notification here to user and message
+
+    }
+
+
+
+
+
 }
