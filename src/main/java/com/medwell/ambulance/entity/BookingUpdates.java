@@ -27,6 +27,7 @@ public class BookingUpdates {
     private Status status; // REQUESTED ; ASSIGNED ; IN_TRANSIT ; COMPLETED ; ARRIVING
 
     @ManyToOne
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 
     private LocalDateTime updatedAt;

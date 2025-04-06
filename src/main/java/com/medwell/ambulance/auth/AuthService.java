@@ -21,6 +21,5 @@ public class AuthService {
                 .email(email).name(name).mobileNumber(mobileNumber).userType(userType).build();
         return customUserRepository.save(customUser);
 
-
     }
 }

@@ -2,15 +2,14 @@ package com.medwell.ambulance.ambulance;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.medwell.ambulance.dto.AceeptBookingRequestDTO;
-import com.medwell.ambulance.dto.AmbulanceProfileDTO;
-import com.medwell.ambulance.dto.BookingResponseDTO;
-import com.medwell.ambulance.dto.BookingStatusRequestDTO;
+import com.medwell.ambulance.dto.*;
 import com.medwell.ambulance.entity.Ambulance;
 import com.medwell.ambulance.utils.RedisGeoLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ambulance")
@@ -54,6 +53,15 @@ public class AmbulanceController {
         );
         return ResponseEntity.status(201).build();
     }
+
+    @PostMapping("/set-dropoff-location")
+    public ResponseEntity<?> setDropOffLocation(@RequestBody DropOffLocationRequestDTO dropOffLocationRequestDTO){
+
+        String linkTodestination=ambulanceService.setDropOffLocationOfBooking(dropOffLocationRequestDTO.getBookingId(),dropOffLocationRequestDTO.getLat(),dropOffLocationRequestDTO.getLon());
+        return ResponseEntity.status(201).body(Map.of("gmapsUrl",linkTodestination));
+    }
+
+
 
 
 

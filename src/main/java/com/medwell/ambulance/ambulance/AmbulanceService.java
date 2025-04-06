@@ -88,9 +88,10 @@ public class AmbulanceService {
         booking.setRouteToCustomer(polyine);
         bookingRepository.save(booking);
 
-        BookingUpdates updates=bookingUpdatesRepository.findByBooking(booking);
+        BookingUpdates updates=new BookingUpdates();
         updates.setStatus(Status.ASSIGNED);
         updates.setUpdatedAt(LocalDateTime.now());
+        updates.setBooking(booking);
         bookingUpdatesRepository.save(updates);
 
         redisGeoLocationService.removeAmbulanceGeoData(ambulanceId);
@@ -107,7 +108,7 @@ public class AmbulanceService {
 
     public void updateBookingStatusOfLocation(String updatedStatus,String bookingId){
         Booking booking=bookingRepository.findById(bookingId).get();
-        BookingUpdates bookingUpdates=bookingUpdatesRepository.findByBooking(booking);
+        BookingUpdates bookingUpdates=new BookingUpdates();
         Status status=switch (updatedStatus){
             case "ARRIVED" -> Status.ARRIVED;
             case "COMPLETED" -> Status.COMPLETED;
@@ -116,13 +117,26 @@ public class AmbulanceService {
         };
         bookingUpdates.setStatus(status);
         bookingUpdates.setUpdatedAt(LocalDateTime.now());
+        bookingUpdates.setBooking(booking);
         bookingUpdatesRepository.save(bookingUpdates);
 //        send notification here to user and message
 
     }
 
 
+    public String setDropOffLocationOfBooking(String bookingId, Double lat, Double lon) {
 
+        Booking booking=bookingRepository.findById(bookingId).get();
+        booking.setDropLongitude(lon);
+        booking.setDropLatitude(lat);
+        String linkToDestination= String.format(
+                "https://www.google.com/maps/dir/?api=1&destination=%.14f,%.14f&travelmode=driving",
+                lat, lon
+        );
+        booking.setDropOffLink(linkToDestination);
+        bookingRepository.save(booking);
 
+        return linkToDestination;
 
+    }
 }
