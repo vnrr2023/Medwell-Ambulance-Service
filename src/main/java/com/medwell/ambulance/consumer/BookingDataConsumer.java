@@ -22,9 +22,8 @@ public class BookingDataConsumer {
     public void consumeLocationOfAmbulance(String message) throws JsonProcessingException {
         RealTimeLocationUpdatesDTO realTimeLocationUpdatesDTO=objectMapper.readValue(message, RealTimeLocationUpdatesDTO.class);
         redisRealTimeTrackingService.setCurrentLocationOfAmbulance(realTimeLocationUpdatesDTO.getBookingId(),message);
+        System.out.println(realTimeLocationUpdatesDTO);
         System.out.println("saved real time data in redis");
     }
-
-
 
 }

@@ -25,11 +25,11 @@ public class Booking {
         if (this.id==null) this.id= NanoIdUtils.randomNanoId();
     }
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ambulance_id")
     private CustomUser ambulance;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "customer_id")
     private CustomUser customer;
 

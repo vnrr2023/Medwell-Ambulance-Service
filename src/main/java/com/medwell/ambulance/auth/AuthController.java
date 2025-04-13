@@ -20,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterUserDTO registerUserDTO){
-
+        System.out.println(registerUserDTO);
         CustomUser customUser =authService.registerNewUser(registerUserDTO.getName(),registerUserDTO.getEmail(),registerUserDTO.getMobileNumber(),registerUserDTO.getUserType());
         return ResponseEntity.status(200).body(customUser);
     }

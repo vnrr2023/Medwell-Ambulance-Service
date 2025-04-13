@@ -32,7 +32,7 @@ public class AmbulanceWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
     AmbulanceLocationDTO ambulanceLocationDTO=objectMapper.readValue(message.getPayload(), AmbulanceLocationDTO.class);
-//    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
+    kafkaTemplate.send("ambulance-locations",ambulanceLocationDTO.getAmbulanceId(),message.getPayload());
         redisGeoLocationService.setLocationOfAmbulance(ambulanceLocationDTO);
     String requests=redisBookingService.getAllBookingRequests(ambulanceLocationDTO.getAmbulanceId());
     session.sendMessage(new TextMessage(requests));

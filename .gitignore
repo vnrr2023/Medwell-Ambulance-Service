@@ -14,3 +14,4 @@ target/
 
 /src/main/resources/secrets.properties
 /src/main/resources/application.properties
+/src/main/resources/firebase-service-account.json
