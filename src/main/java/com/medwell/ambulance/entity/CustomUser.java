@@ -34,6 +34,8 @@ public class CustomUser {
 
     private String userType;
 
+    private String token;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

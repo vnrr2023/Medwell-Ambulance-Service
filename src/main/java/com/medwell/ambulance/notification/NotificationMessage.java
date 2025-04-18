@@ -10,6 +10,6 @@ public class NotificationMessage {
     private String message;
     private String token;
     private String title;
-    private String imageUrl;
+    private String imageUrl="https://github.com/vnrr2023/medwell-ambulance-app/blob/main/assets/images/adaptive-icon.png";
 
 }

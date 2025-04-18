@@ -47,6 +47,7 @@ public class Booking {
     private String routeToCustomer;
 
     private String dropOffLink;
+    private String pickUpLink;
 
 
 }
