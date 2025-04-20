@@ -19,7 +19,7 @@ public class BookingDataConsumer {
     private RedisRealTimeTrackingService redisRealTimeTrackingService;
 
 
-    @KafkaListener(topics = "booking-real-time-updates",groupId = "group1")
+    @KafkaListener(topics = "booking-real-time-updates",groupId = "my-spring-group")
     public void consumeLocationOfAmbulance(String message)  {
         try {
             RealTimeLocationUpdatesDTO realTimeLocationUpdatesDTO = objectMapper.readValue(message, RealTimeLocationUpdatesDTO.class);
