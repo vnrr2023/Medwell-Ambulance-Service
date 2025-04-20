@@ -6,6 +6,7 @@ import com.medwell.ambulance.ambulance.AmbulanceService;
 import com.medwell.ambulance.dto.BookingRequestDTO;
 import com.medwell.ambulance.dto.DropOffLocationRequestDTO;
 import com.medwell.ambulance.dto.RealTimeLocationUpdatesDTO;
+import com.medwell.ambulance.entity.Booking;
 import com.medwell.ambulance.exceptions.AmbulanceCustomException;
 import com.medwell.ambulance.exceptions.ErrorResponseDTO;
 import com.medwell.ambulance.utils.RedisGeoLocationService;
@@ -60,6 +61,16 @@ public class CustomerController {
             return ResponseEntity.status(201).body(Map.of("bookingId",bookingId));
         } catch (JsonProcessingException e) {
             throw new AmbulanceCustomException("Failed to create booking",400,e.getMessage());
+        }
+    }
+
+    @GetMapping("/booking-details/{bookingId}")
+    public ResponseEntity<?> getBookingDetails(@PathVariable("bookingId") String bookingId){
+        try {
+            Booking booking=customerService.getBookingDetails(bookingId);
+            return ResponseEntity.status(200).body(booking);
+        } catch (Exception e) {
+            throw new AmbulanceCustomException("Failed to get details",400,e.getMessage());
         }
     }
 

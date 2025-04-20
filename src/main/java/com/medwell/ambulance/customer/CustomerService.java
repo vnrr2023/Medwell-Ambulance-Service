@@ -83,4 +83,8 @@ public class CustomerService {
         return booking.getId();
 
     }
+
+    public Booking getBookingDetails(String bookingId) {
+        return bookingRepository.getReferenceById(bookingId);
+    }
 }
