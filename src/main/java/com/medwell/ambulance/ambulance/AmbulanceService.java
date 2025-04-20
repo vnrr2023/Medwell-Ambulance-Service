@@ -19,6 +19,7 @@ import com.medwell.ambulance.utils.GmapsService;
 import com.medwell.ambulance.utils.RedisBookingService;
 import com.medwell.ambulance.utils.RedisGeoLocationService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class AmbulanceService {
 
     @Autowired
@@ -114,7 +116,7 @@ public class AmbulanceService {
                     booking.getCustomer().getId(), Status.ASSIGNED
             );
         } catch (FirebaseMessagingException e) {
-            System.out.println(e.getMessage());
+            log.error("Failed to send notification {}", e.getMessage());
         }
         return BookingResponseDTO.builder().booking(booking).status(true).message("Assignment Successfull")
                 .build();
@@ -138,7 +140,7 @@ public class AmbulanceService {
             notificationSenderService.sendStatusUpdateNotification(booking.getCustomer().getId(), status);
         }
         catch (FirebaseMessagingException e){
-            System.out.println(e.getMessage());
+            log.error("Failed to send updates notification {}", e.getMessage());
         }
 
     }

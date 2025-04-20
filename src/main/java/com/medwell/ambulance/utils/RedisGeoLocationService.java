@@ -2,6 +2,7 @@ package com.medwell.ambulance.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
 import org.springframework.data.redis.connection.RedisGeoCommands;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.connection.RedisGeoCommands.GeoRadiusComma
 import java.util.*;
 
 @Component
+@Slf4j
 public class RedisGeoLocationService {
 
     @Autowired
@@ -26,7 +28,7 @@ public class RedisGeoLocationService {
 //    ambulances will update their real time location and save to redis
     public void setLocationOfAmbulance(AmbulanceLocationDTO ambulanceLocationDTO){
         redisTemplate.opsForGeo().add("ambulance-locations", new Point(ambulanceLocationDTO.getLongitude(), ambulanceLocationDTO.getLatitude()), ambulanceLocationDTO.getAmbulanceId());
-        System.out.println("Saved to redis");
+        log.info("Saved real time location of ambulance in redis");
     }
 
 //    this will be used when ambulance is booked

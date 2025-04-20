@@ -1,13 +1,14 @@
 package com.medwell.ambulance.consumer;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medwell.ambulance.dto.AmbulanceLocationDTO;
 import com.medwell.ambulance.utils.RedisGeoLocationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class AmbulanceConsumerService {
 
@@ -19,9 +20,13 @@ public class AmbulanceConsumerService {
 
 
     @KafkaListener(topics = "ambulance-locations",groupId = "group1")
-    public void consumeAmbulanceLocatio(String message) throws Exception {
-        AmbulanceLocationDTO locationDTO=objectMapper.readValue(message, AmbulanceLocationDTO.class);
-        redisGeoLocationService.setLocationOfAmbulance(locationDTO);
+    public void consumeAmbulanceLocatio(String message)  {
+        try {
+            AmbulanceLocationDTO locationDTO = objectMapper.readValue(message, AmbulanceLocationDTO.class);
+            redisGeoLocationService.setLocationOfAmbulance(locationDTO);
+        } catch (Exception e) {
+            log.error("Failed to read Json data as it is null");
+        }
     }
 
 }
