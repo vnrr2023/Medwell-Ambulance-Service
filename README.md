@@ -35,11 +35,52 @@ Medwell Ambulance is a real time ambulance booking system. Users can seamlessly 
 
 ## System Design
 
-![system_design](https://github.com/vnrr2023/CsGpt-Ai-Backend/blob/main/hld.gif?raw=true)
+![system_design](https://github.com/vnrr2023/Medwell-Ambulance-Service/blob/main/ambulance.gif?raw=true)
+
+## ER-Diagram
+
+![system_design](https://github.com/vnrr2023/Medwell-Ambulance-Service/blob/main/ambualance-er.png?raw=true)
+
+## Run Locally (Create the Below two files in the resources folder)
+```
+# application.properties
+
+spring.application.name=ambulance
+
+spring.datasource.url=jdbc:postgresql://<Your Credentials>
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 
 
-## Run Locally
-- Check setup.txt for entire server setup.
+firebaseServiceJson="<your-firebase-service-account.json>"
+
+
+# Kafka bootstrap servers (Confluent Cloud)
+spring.kafka.bootstrap-servers=
+
+# SASL authentication for Confluent Cloud
+spring.kafka.properties.security.protocol=
+spring.kafka.properties.sasl.mechanism=
+spring.kafka.properties.sasl.jaas.config=
+
+# Producer config
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+
+# Consumer config
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.group-id=my-spring-group
+```
+
+```
+# secrets.properties
+redisPassword=<Your-Redis-Cloud_password>
+redisHost=<The Cloud Host Name>
+redisPort=<Cloud Port>
+```
 
 ## 🔗 Demo
 
