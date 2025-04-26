@@ -111,13 +111,13 @@ public class AmbulanceService {
         redisBookingService.removeBooking(bookingId);
 
         redisBookingService.removeRequestsFromAmbulances(requestId,otherAmbulances);
-        try {
-            notificationSenderService.sendStatusUpdateNotification(
-                    booking.getCustomer().getId(), Status.ASSIGNED
-            );
-        } catch (FirebaseMessagingException e) {
-            log.error("Failed to send notification {}", e.getMessage());
-        }
+//        try {
+//            notificationSenderService.sendStatusUpdateNotification(
+//                    booking.getCustomer().getId(), Status.ASSIGNED
+//            );
+//        } catch (FirebaseMessagingException e) {
+//            log.error("Failed to send notification {}", e.getMessage());
+//        }
         return BookingResponseDTO.builder().booking(booking).status(true).message("Assignment Successfull")
                 .build();
 
@@ -136,12 +136,12 @@ public class AmbulanceService {
         bookingUpdates.setUpdatedAt(LocalDateTime.now());
         bookingUpdates.setBooking(booking);
         bookingUpdatesRepository.save(bookingUpdates);
-        try {
-            notificationSenderService.sendStatusUpdateNotification(booking.getCustomer().getId(), status);
-        }
-        catch (FirebaseMessagingException e){
-            log.error("Failed to send updates notification {}", e.getMessage());
-        }
+//        try {
+//            notificationSenderService.sendStatusUpdateNotification(booking.getCustomer().getId(), status);
+//        }
+//        catch (FirebaseMessagingException e){
+//            log.error("Failed to send updates notification {}", e.getMessage());
+//        }
 
     }
 

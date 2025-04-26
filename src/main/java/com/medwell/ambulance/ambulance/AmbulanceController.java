@@ -87,10 +87,15 @@ public class AmbulanceController {
 
 
     @ExceptionHandler(AmbulanceCustomException.class)
-    public ResponseEntity<?> handleException(HttpServletResponse resp, AmbulanceCustomException exception){
-        ErrorResponseDTO errorResponse=new ErrorResponseDTO(exception.getMessage(),exception.getStatus());
-        log.error("{}  {}", exception.getMessage(), exception.getExceptionMessage());
-        return ResponseEntity.status(errorResponse.getStatus()).body(resp);
+    public ResponseEntity<ErrorResponseDTO> handleException(AmbulanceCustomException exception) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                exception.getMessage(),
+                exception.getStatus()
+        );
+        log.error("{} | Details: {}", exception.getMessage(), exception.getExceptionMessage());
+        return ResponseEntity
+                .status(errorResponse.getStatus())
+                .body(errorResponse);
     }
 
 

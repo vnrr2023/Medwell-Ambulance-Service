@@ -127,6 +127,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>ambulance-app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -155,5 +156,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

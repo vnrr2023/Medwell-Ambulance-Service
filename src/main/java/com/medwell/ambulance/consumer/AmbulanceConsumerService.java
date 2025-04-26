@@ -20,7 +20,7 @@ public class AmbulanceConsumerService {
 
 
     @KafkaListener(topics = "ambulance-locations",groupId = "my-spring-group")
-    public void consumeAmbulanceLocatio(String message)  {
+    public void consumeAmbulanceLocation(String message)  {
         try {
             AmbulanceLocationDTO locationDTO = objectMapper.readValue(message, AmbulanceLocationDTO.class);
             redisGeoLocationService.setLocationOfAmbulance(locationDTO);
