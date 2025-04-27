@@ -84,8 +84,8 @@ redisPort=<Cloud Port>
 
 ## 🔗 Demo
 
-Click the youtube icon to see the demo.
-[![youtube](https://img.shields.io/badge/youtube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/qRZDOtLxSw4)
+Click the youtube icon to see the demo of the app.
+[![youtube](https://img.shields.io/badge/youtube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/NOePY7MO7bU)
 
 
 
