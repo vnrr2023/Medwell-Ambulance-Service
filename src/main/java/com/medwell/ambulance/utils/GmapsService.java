@@ -14,7 +14,7 @@ public class GmapsService {
     @Autowired
     private  RestTemplate restTemplate;
 
-    private final String GMAPS_SERVICE_URL="https://gmapsmedwell.vercel.app";
+    private final String GMAPS_SERVICE_URL="";
 
     public String getPolyline(double lat1, double lon1, double lat2, double lon2) {
         try {
@@ -24,7 +24,6 @@ public class GmapsService {
             );
 
             PolylineDTO polylineDTO = restTemplate.getForObject(url, PolylineDTO.class);
-
             return polylineDTO.getPolyline() != null ? polylineDTO.getPolyline() : null;
         } catch (Exception e) {
             log.error("Failed to fetch polyline from Gmaps Service Server");
